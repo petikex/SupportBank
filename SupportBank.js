@@ -1,10 +1,11 @@
+console.log('Welcome to SupportBank\n \n');
 let readlineSync = require('readline-sync');
 var transactions = [];
-var numOfTransactions = 0;
 var numOfAccounts = 0;
 var accounts = [];
 var accountNames = [];
-var data = [];
+var numOfTransactions = 0;
+
 
 class Account {
     constructor(name,credit) {
@@ -15,11 +16,15 @@ class Account {
     }
     send(transaction) {
         this.transactionSend.push(transaction);
-        this.credit = this.credit - parseInt(transaction.amount);
+        if ((transaction.amount !== undefined) && (isValidCredit(transaction.amount))) {
+            this.credit = this.credit - parseInt(transaction.amount);
+        }
     }
     receive(transaction) {
         this.transactionReceive.push(transaction);
-        this.credit = this.credit + parseInt(transaction.amount);
+        if ((transaction.amount !== undefined) && (isValidCredit(transaction.amount))) {
+            this.credit = this.credit + parseInt(transaction.amount);
+        }
     }
 }
 
@@ -33,56 +38,20 @@ class Transaction {
     }
 }
 
-
-
-
-
-console.log("Welcome to SupportBank\n \n");
-main();
-function main() {
-    let compile = false;
-    var action;
-    while (compile === false) {
-        action = readlineSync.question('Would you like to extend the database or list data? (y/n) (List All, List Account)\n');
-        if ((action === 'y') || (action === 'n')) {
-            compile = true;
-        } else {
-            if (action.slice(0,4) === 'List') {
-                if (action.slice(4,8) === ' All') {
-                    console.log("succes");
-                    for (var i = 0; i<numOfAccounts - 1 ; i++) {
-                        console.log('Account name: ',accountNames[i],'\nAvailable amount: ',accounts[i].credit);
-                    }
-                } else {
-                    var cAccount = action.slice(5,action.length)
-                    var indexOfCAccount = accountNames.indexOf(cAccount);
-                    if (indexOfCAccount!== -1) {
-                        cAccount = accounts[indexOfCAccount];
-                        console.log("Account name: ",cAccount.name, " credit available: ", cAccount.credit);
-                        console.log("Transaction history: ");
-                        console.log("incoming transactions:");
-                        for (var i = 0; i<cAccount.transactionReceive.length; i++) {
-                            displayTransaction(cAccount.transactionReceive[i]);
-                        }
-                        console.log("outgoing transactions:");
-                        for (var i = 0; i<cAccount.transactionSend.length; i++) {
-                            displayTransaction(cAccount.transactionSend[i]);
-                        }
-                    }
-                }
-            } else {console.log("invalid input \n");}
+function isValidCredit(credit) {
+    var result = true;
+    var validValues = ['0','1','2','3','4','5','6','7','8','9','.'];
+    for (var j = 0; j<credit.length; j++) {
+        if (validValues.indexOf(credit[j]) === -1) {
+            result = false;
         }
-        
     }
-    if (action === 'y') {
-        readFile();
-    } else { if (action === 'n') {console.log("Bye bye\n");}}
+    return result;
 }
 
 function displayTransaction(transaction) {
-    console.log("From : ",transaction.from, " To: ",transaction.to, "Amount: ", transaction.amount, "Comment: ",transaction.narative);
+    console.log('From : ',transaction.from, ' To: ',transaction.to, 'Amount: ', transaction.amount, 'Comment: ',transaction.narative);
 }
-
 
 function createAccount(name) {
     if (accountNames.indexOf(name) === -1) {
@@ -106,12 +75,12 @@ function readFile() {
     let fileFound = false;
 
     let breakCommand = false;
-    while ((fileFound === false) && (breakCommand === false)) {
+    while (!fileFound && !breakCommand) {
         let fs = require('fs');
         var temp = fileName;
         if (fs.existsSync(fileName)) {
            fileFound = true;
-           console.log("The file is being loaded \n");
+           console.log('The file is being loaded \n');
            inputData = fs.readFileSync(temp,'utf8');
            inputData = inputData.split('\n');
            var data = [];
@@ -120,11 +89,11 @@ function readFile() {
            }
            
            for (var i = 0; i<data.length; i++) {  
-                
-                progressTransaction(new Transaction(data[i][0],data[i][1],data[i][2],data[i][3],data[i][4]));
+                const temp = data[i];     
+                progressTransaction(new Transaction(temp[0],temp[1],temp[2],temp[3],temp[4]));
                 
             }
-            console.log("The file has been added");
+            console.log('The file has been added');
             
             
         }
@@ -132,12 +101,51 @@ function readFile() {
             fileName = readlineSync.question('File not found. Provide valid fileame or type stop \n');
         }
         
-        if (fileName === "stop") {
+        if (fileName === 'stop') {
             breakCommand = true;
         }
     }
     main();
 }
 
-//let userName = readlineSync.question('Welcome to support\n');
-//console.log('Hi ' + userName + '!');
+function main() {
+    let compile = false;
+    var action;
+    while (compile === false) {
+        action = readlineSync.question('Would you like to extend the database or list data? (y/n) (List All, List Account)\n');
+        if ((action === 'y') || (action === 'n')) {
+            compile = true;
+        } else {
+            if (action.slice(0,4) === 'List') {
+                if (action.slice(4,8) === ' All') {
+                    console.log('succes');
+                    for (var i = 0; i<numOfAccounts - 1 ; i++) {
+                        console.log('Account name: ',accountNames[i],'\nAvailable amount: ',accounts[i].credit);
+                    }
+                } else {
+                    var cAccount = action.slice(5,action.length)
+                    var indexOfCAccount = accountNames.indexOf(cAccount);
+                    if (indexOfCAccount!== -1) {
+                        cAccount = accounts[indexOfCAccount];
+                        console.log('Account name: ',cAccount.name, ' credit available: ', cAccount.credit);
+                        console.log('Transaction history: ');
+                        console.log('incoming transactions:');
+                        for (var i = 0; i<cAccount.transactionReceive.length; i++) {
+                            displayTransaction(cAccount.transactionReceive[i]);
+                        }
+                        console.log('outgoing transactions:');
+                        for (var i = 0; i<cAccount.transactionSend.length; i++) {
+                            displayTransaction(cAccount.transactionSend[i]);
+                        }
+                    }
+                }
+            } else {console.log('invalid input \n');}
+        }
+        
+    }
+    if (action === 'y') {
+        readFile();
+    } else { if (action === 'n') {console.log('Bye bye\n');}}
+}
+
+main();
