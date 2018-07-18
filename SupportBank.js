@@ -1,3 +1,4 @@
+const logger = log4js.getLogger('<filename>');
 console.log('Welcome to SupportBank\n \n');
 let readlineSync = require('readline-sync');
 var transactions = [];
