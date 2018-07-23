@@ -7,15 +7,15 @@ class Account {
     }
     send(transaction) {
         this.transactionSend.push(transaction);
-        if ((transaction.amount !== undefined) && (isValidCredit(transaction.amount))) {
+        if (isValidCredit(transaction.amount)) {
             this.credit = this.credit - parseInt(transaction.amount);
         } else { logger.warn('Uncrecognised transaction value at: \n',transaction);}
     }
     receive(transaction) {
         this.transactionReceive.push(transaction);
-        if ((transaction.amount !== undefined) && (isValidCredit(transaction.amount))) {
+        if (isValidCredit(transaction.amount)) {
             this.credit = this.credit + parseInt(transaction.amount);
-        }
+        } else { logger.warn('Uncrecognised transaction value at: \n',transaction);}
     }
 }
 
@@ -30,10 +30,11 @@ class Transaction {
 }
 
 function isValidCredit(credit) {
+    if (!credit) return false;
     var result = true;
     var validValues = ['0','1','2','3','4','5','6','7','8','9','.'];
     for (var j = 0; j<credit.length; j++) {
-        if (validValues.indexOf(credit[j]) === -1) {
+        if ((isNaN(credit[j])) && (credit[j] !== '.')) {
             result = false;
         }
     }

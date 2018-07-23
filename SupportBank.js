@@ -59,7 +59,6 @@ function main() {
         } else {
             if (action.slice(0,4) === 'List') {
                 if (action.slice(4,8) === ' All') {
-                    console.log('testing displayAll');
                     display.displayAll();
                 } else {
                     var cAccount = action.slice(5,action.length)
@@ -71,7 +70,7 @@ function main() {
     }
     if (action === 'y') {
         readFile();
-    } else { if (action === 'n') {console.log('Bye bye\n');}}
+    } else  if  (action === 'n') {console.log('Bye bye\n');}
 }
 
 main();

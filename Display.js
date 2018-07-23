@@ -1,26 +1,24 @@
 const data = require('./Data')
 
 function displayAll () {
-    console.log('test');
-    for (var i = 0; i<data.accountNames.length; i++) {
-        console.log('Account name: ',data.accountNames[i],'\nAvailable amount: ',data.accounts[i].credit);
-    }
+    data.accounts.forEach( account => {
+        console.log('Account name: ',account.name,'\nAvailable amount: ',account.credit);
+    });
 }
 
 function displayAccount(accountName) {
-    var indexOfCAccount = data.accountNames.indexOf(accountName);
-    if (indexOfCAccount!== -1) {
-        cAccount = data.accounts[indexOfCAccount];
+    if (data.accounts[accountName]) {
+        cAccount = data.accounts[accountName];
         console.log('Account name: ',cAccount.name, ' credit available: ', cAccount.credit);
         console.log('Transaction history: ');
         console.log('incoming transactions:');
-        for (var i = 0; i<cAccount.transactionReceive.length; i++) {
-             displayTransaction(cAccount.transactionReceive[i]);
-        }
+        cAccount.transactionReceive.forEach(transaction => {
+            displayTransaction(transaction)
+        });
         console.log('outgoing transactions:');
-        for (var i = 0; i<cAccount.transactionSend.length; i++) {
-             displayTransaction(cAccount.transactionSend[i]);
-        }
+        cAccount.transactionSend.forEach(transaction => {
+            displayTransaction(transaction)
+        });
     }
 }
 
