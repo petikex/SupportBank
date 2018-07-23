@@ -1,6 +1,6 @@
 const types = require('./SupportTypes');
 var transactions = [];
-var accounts = [];
+var accounts = {};
 
 function createAccount(name) {
     if (!accounts[name]) {

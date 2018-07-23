@@ -6,6 +6,7 @@ const supportedFileFormats = ['csv','son','xml'];
 const log4js = require('log4js')
 const fileProgress = require('./Parser')
 const display = require('./Display')
+const fs = require('fs');
 
 log4js.configure({
     appenders: {
@@ -27,7 +28,6 @@ function readFile() {
     logProgress(fileName);
     let breakCommand = false;
     while (!fileFound && !breakCommand) {
-        let fs = require('fs');
         var temp = fileName;
         var extension = fileName.slice(fileName.length - 3, fileName.length);
         if ((fs.existsSync(fileName)) && (supportedFileFormats.indexOf(extension) !== -1)) {
@@ -52,16 +52,16 @@ function readFile() {
 function main() {
     let compile = false;
     var action;
-    while (compile === false) {
+    while (!compile) {
         action = readlineSync.question('Would you like to extend the database or list data? (y/n) (List All, List Account)\n');
         if ((action === 'y') || (action === 'n')) {
             compile = true;
         } else {
-            if (action.slice(0,4) === 'List') {
-                if (action.slice(4,8) === ' All') {
+            if (action.substring(0,4) === 'List') {
+                if (action.substring(4,8) === ' All') {
                     display.displayAll();
                 } else {
-                    var cAccount = action.slice(5,action.length)
+                    var cAccount = action.substring(5,action.length)
                     display.displayAccount(cAccount);
                 }
             } else {console.log('invalid input \n');}

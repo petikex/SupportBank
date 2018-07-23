@@ -9,13 +9,13 @@ class Account {
         this.transactionSend.push(transaction);
         if (isValidCredit(transaction.amount)) {
             this.credit = this.credit - parseInt(transaction.amount);
-        } else { logger.warn('Uncrecognised transaction value at: \n',transaction);}
+        } 
     }
     receive(transaction) {
         this.transactionReceive.push(transaction);
         if (isValidCredit(transaction.amount)) {
             this.credit = this.credit + parseInt(transaction.amount);
-        } else { logger.warn('Uncrecognised transaction value at: \n',transaction);}
+        } 
     }
 }
 

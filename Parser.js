@@ -2,40 +2,29 @@ const moment = require('moment');
 const progress = require('./Data')
 
 function progressFile(fileData, extension) {
-    if (extension === 'csv') {
-        progressCsv(fileData);
-    }
-    if (extension === 'son') {
-        progressJson(fileData);
-    }
-    if (extension === 'xml') {
-        progressXml(fileData);
+    switch (extension) {
+        case 'csv':
+            progressCsv(fileData);
+            break
+        case 'son':
+            progressJson(fileData);
+            break
+        case 'xml':
+            progressXml(fileData);
     }
 }
 
 function progressJson(fileData) {
-    fileData = fileData.slice(1,fileData.length -1);
-    fileData = fileData.split('{');
-    var string;
-    for (var i = 1; i<fileData.length ; i++) {
-        var string = fileData[i];
-        string = string.split('\n');
-        for (var j = 0; j<string.length; j++) {
-            string[j] = string[j].split('"');
-        }
-        var temp = [];
-        for (var j = 1; j<=4; j++) {
-            temp.push(string[j][3]);
-        }
-        temp.push(string[5][2].slice(2,string[5][2].length));
-        progressTransaction(temp);
-    }
+    const values = JSON.parse(fileData);
+    values.forEach(transaction => {
+        progress.progressTransaction([transaction.Date,transaction.FromAccount,transaction.ToAccount,transaction.Narrative,transaction.Amount]);
+    })
 }
 
 function progressXml(fileData) {
-    fileData = fileData.split('SupportTransaction');
-    for (var i = 1; i<fileData.length - 1; i = i + 2) {
-        var data = fileData[i];
+    let xmlLines = fileData.split('SupportTransaction');
+    for (var i = 1; i<xmlLines.length - 1; i = i + 2) {
+        var data = xmlLines[i];
         data = data.split('>');
         var temp = [];
         temp.push(xmlDate(data[0].slice(7,data[0].length-1)))
